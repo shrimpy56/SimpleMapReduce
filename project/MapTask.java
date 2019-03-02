@@ -28,7 +28,6 @@ public class MapTask extends Thread {
             //notice server
             TTransport transport = new TSocket(serverIP, serverPort);
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-            //todo
             MasterServer.Client server = new MasterServer.Client(protocol);
             //Try to connect
             transport.open();
