@@ -71,7 +71,7 @@ public class MapTask extends Thread {
             try {
             BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
             String sentimentString = Float.toString(sentiment);
-            String toFileString = new StringBuilder(inputFilename).append(",").append(sentimentString).toString();
+            String toFileString = new StringBuilder(inputFilename).append(" ").append(sentimentString).toString();
             out.write(toFileString);
             out.close();
             } catch (IOException e) {
