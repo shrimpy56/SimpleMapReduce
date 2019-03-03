@@ -8,15 +8,15 @@ public class MapTask extends Thread {
 
     // private static String NegativeFile = "negative.txt";
     // private static String PositiveFile = "positive.txt";
-    private static ArrayList<String> NegLib;// = new ArrayList<String>();
-    private static ArrayList<String> PosLib;// = new ArrayList<String>();
+    private static HashSet<String> NegLib;// = new ArrayList<String>();
+    private static HashSet<String> PosLib;// = new ArrayList<String>();
     static {
         String NegativeFile = "negative.txt";
         String PositiveFile = "positive.txt";
         File nfile = new File(NegativeFile);
         File pfile = new File(PositiveFile);
-        NegLib = new ArrayList<String>();
-        PosLib = new ArrayList<String>();
+        NegLib = new HashSet<>();
+        PosLib = new HashSet<>();
         if (nfile.isFile() && nfile.exists()) {
             try {
                 Scanner nscanner = new Scanner(nfile);
@@ -68,7 +68,10 @@ public class MapTask extends Thread {
             int negativeCounter = score[0];
             int positiveCounter = score[1];
             //calculate sentiment
+            System.out.println("pos points: " + Double.toString(positiveCounter));
+            System.out.println("neg points: " + Double.toString(negativeCounter));
             double sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
+            System.out.println(Double.toString(sentiment));
             //write to result file
             try {
             BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
@@ -98,11 +101,11 @@ public class MapTask extends Thread {
         if (input.exists() && input.isFile()) {
             int[] score = {0, 0};
             try {
-                Scanner scn = new Scanner(input);
-                while (scn.hasNextLine()) {
-                    String temp = scn.nextLine();
+                Scanner scn = new Scanner(input).useDelimiter("[^-a-zA-Z]+");
+                while (scn.hasNext()) {
+                    String temp = scn.next();
                     String str = temp.toLowerCase();
-                    for (String word : str.split("[ ',.:;/\\\\?!|]+|--")) {
+                    for (String word : str.split("--")) {
                         if (NegLib.contains(word)) {
                             score[0]++;
                         }
