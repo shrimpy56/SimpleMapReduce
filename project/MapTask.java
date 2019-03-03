@@ -68,7 +68,15 @@ public class MapTask extends Thread {
             //calculate sentiment
             float sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
             //write to result file
-            // @todo
+            try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
+            String sentimentString = Float.toString(sentiment);
+            String toFileString = new StringBuilder(inputFilename).append(",").append(sentimentString).toString();
+            out.write(toFileString);
+            out.close();
+            } catch (IOException e) {
+                System.out.println("OutPut Error!");
+            }
             //notice server
             TTransport transport = new TSocket(serverIP, serverPort);
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
@@ -90,7 +98,8 @@ public class MapTask extends Thread {
             try {
                 Scanner scn = new Scanner(input);
                 while (scn.hasNextLine()) {
-                    String str = scn.nextLine();
+                    String temp = scn.nextLine();
+                    String str = temp.toLowerCase();
                     for (String word : str.split("[ ',.:;/\\\\?!|]+|--")) {
                         if (NegLib.contains(word)) {
                             score[0]++;
@@ -100,6 +109,7 @@ public class MapTask extends Thread {
                         }
                     }
                 }
+                scn.close();
             } catch (FileNotFoundException e) {
                 System.out.println("Error in count scores");
                 return null;
