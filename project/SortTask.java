@@ -4,9 +4,6 @@ import java.lang.*;
 
 public class SortTask extends Thread {
 
-    public static String NegativeFile = "negative.txt";
-    public static String PositiveFile = "positive.txt";
-
     public SortTask(String serverIP, int serverPort, String inputFilenames, String resultFilename)
     {
         this.serverIP = serverIP;
@@ -18,25 +15,40 @@ public class SortTask extends Thread {
     public void run()
     {
         try{
-//            //count
-//            int negativeCounter = countWords(NegativeFile);
-//            int positiveCounter = countWords(PositiveFile);
-//            //calculate sentiment
-//            float sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
-//            //write to result file
-//            // @todo
-//            //notice server
-//            TTransport transport = new TSocket(serverIP, serverPort);
-//            TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-//            MasterServer.Client server = new MasterServer.Client(protocol);
-//            //Try to connect
-//            transport.open();
-//            server.noticeFinishedMap(resultFilename);
-//            transport.close();
+            //count
+            int negativeCounter = sortFiles();
+            //calculate sentiment
+            float sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
+            //write to result file
+            // @todo
+            //notice server
+            TTransport transport = new TSocket(serverIP, serverPort);
+            TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
+            MasterServer.Client server = new MasterServer.Client(protocol);
+            //Try to connect
+            transport.open();
+            server.noticeFinishedSort(resultFilename);
+            transport.close();
         } catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+
+    private List<String> sortFiles();
+    {
+        //private Map<String, String> storage = new HashMap<>();
+        Map<String, int> map = new HashMap<>();
+
+        ArrayList<String> ans = new ArrayList<>();
+        for (String& file: inputFilenames)
+        {
+            //read file
+            // todo
+        }
+        //sort
+        // todo
+
     }
 
     private String serverIP;

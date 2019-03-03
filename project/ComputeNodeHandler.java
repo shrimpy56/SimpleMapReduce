@@ -4,7 +4,6 @@ import java.lang.*;
 
 public class ComputeNodeHandler implements ComputeNode.Iface
 {
-    //private Map<String, String> storage = new HashMap<>();
     private String serverIP;
     private int serverPort;
     private String resultFilename;
