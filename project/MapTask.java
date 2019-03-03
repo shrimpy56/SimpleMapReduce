@@ -1,4 +1,6 @@
 import org.apache.thrift.TException;
+
+import java.io.*;
 import java.util.*;
 import java.lang.*;
 
@@ -15,7 +17,7 @@ public class MapTask extends Thread {
         File pfile = new File(PositiveFile);
         NegLib = new ArrayList<String>();
         PosLib = new ArrayList<String>();
-        if (nfile.isFile() && nfile.exist()) {
+        if (nfile.isFile() && nfile.exists()) {
             try {
                 Scanner nscanner = new Scanner(nfile);
                 while (nscanner.hasNext()) {
@@ -28,11 +30,11 @@ public class MapTask extends Thread {
             }
         }
 
-        if (pfile.isFile() && pfile.exist()) {
+        if (pfile.isFile() && pfile.exists()) {
             try {
                 Scanner pscanner = new Scanner(pfile);
                 while (pscanner.hasNext()) {
-                    String word = nscanner.next();
+                    String word = pscanner.next();
                     PosLib.add(word);
                 }
                 pscanner.close();
@@ -59,18 +61,18 @@ public class MapTask extends Thread {
     {
         try {
             //count
-            int[2] score = countScore();
+            int[] score = countScore();
             if (score == null) {
                 throw new Exception("aaaaaaaaaaaaaa");
             }
             int negativeCounter = score[0];
             int positiveCounter = score[1];
             //calculate sentiment
-            float sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
+            double sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
             //write to result file
             try {
             BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
-            String sentimentString = Float.toString(sentiment);
+            String sentimentString = Double.toString(sentiment);
             String toFileString = new StringBuilder(inputFilename).append(" ").append(sentimentString).toString();
             out.write(toFileString);
             out.close();
@@ -93,7 +95,7 @@ public class MapTask extends Thread {
 
     private int[] countScore() {
         File input = new File(inputFilename);
-        if (input.exist() && input.isFile()) {
+        if (input.exists() && input.isFile()) {
             int[] score = {0, 0};
             try {
                 Scanner scn = new Scanner(input);
