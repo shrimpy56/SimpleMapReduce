@@ -1,6 +1,7 @@
 import org.apache.thrift.TException;
 import java.util.*;
 import java.lang.*;
+import java.io.*;
 
 public class SortTask extends Thread {
 
@@ -16,11 +17,14 @@ public class SortTask extends Thread {
     {
         try{
             //count
-            int negativeCounter = sortFiles();
-            //calculate sentiment
-            float sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
+            List<String> files = sortFiles();
             //write to result file
-            // @todo
+            PrintWriter output = new PrintWriter(resultFilename);
+            for (String& file: files)
+            {
+                output.println(file);
+            }
+            output.close();
             //notice server
             TTransport transport = new TSocket(serverIP, serverPort);
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
@@ -37,18 +41,36 @@ public class SortTask extends Thread {
 
     private List<String> sortFiles();
     {
-        //private Map<String, String> storage = new HashMap<>();
-        Map<String, int> map = new HashMap<>();
-
-        ArrayList<String> ans = new ArrayList<>();
-        for (String& file: inputFilenames)
+        Map<String, float> map = new HashMap<>();
+        for (String& filename: inputFilenames)
         {
             //read file
-            // todo
+            File file = new File(filename);
+            Scanner input = new Scanner(file);
+
+            while (input.hasNext())
+            {
+                String key = input.next();
+                float value = input.nextFloat();
+                map.add(key, value);
+            }
+
+            input.close();
         }
         //sort
-        // todo
-
+        List<Map.Entry<String, float>> files = new ArrayList<Map.Entry<String, float>>(map.entrySet());
+        Collections.sort(files, new Comparator<Map.Entry<String, float>>() {
+            public int compare(Entry<String, float> entry1, Entry<String, float> entry2)
+            {
+                return entry1.getValue().compareTo(entry2.getValue());
+            }
+        });
+        List<String> ans = new ArrayList<>();
+        for (Map.Entry<String, float>& file: files)
+        {
+            ans.add(file.getKey());
+        }
+        return ans;
     }
 
     private String serverIP;
