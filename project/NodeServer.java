@@ -11,19 +11,14 @@ import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import java.net.InetAddress;
 
 public class NodeServer {
-//    public static ComputeNodeHandler handler;
-//    public static ComputeNode.Processor processor;
     private float loadProbability = 0;
     private int port = 9099;
     private ServerData serverData;
-    String serverIP;
-    int serverPort;
+    private String serverIP;
+    private int serverPort;
 
     public static void main(String [] args) {
         try {
-//            handler = new ComputeNodeHandler();
-//            processor = new ComputeNode.Processor(handler);
-
             // pass master server ip, server port, node port and loadprobability in.
             serverIP = String.parseString(args[0]);
             serverPort = Integer.parseInt(args[1]);
