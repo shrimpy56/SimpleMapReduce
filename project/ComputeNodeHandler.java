@@ -7,7 +7,7 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     private String serverIP;
     private int serverPort;
     private String resultFilename;
-    private bool balancingMode;
+    private boolean balancingMode;
     private float loadProbability;
 
     void setData(String serverIP, int serverPort, ServerData serverData, float loadProbability)
@@ -20,12 +20,13 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     }
 
     @Override
-    public String mapTask(String filename) throws org.apache.thrift.TException;
+    public String mapTask(String filename) throws org.apache.thrift.TException
     {
         if (balancingMode)
         {
             double reject = Math.random();
-            if (reject < loadProbability){
+            if (reject < loadProbability)
+            {
                 return "";
             }
         }
@@ -36,9 +37,9 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     }
 
     @Override
-    public String sortTask(List<String> filenames) throws org.apache.thrift.TException;
+    public String sortTask(List<String> filenames) throws org.apache.thrift.TException
     {
-        SortTask sortTask = new SortTask(serverIP, serverPort, filename, resultFilename, loadProbability);
+        SortTask sortTask = new SortTask(serverIP, serverPort, filenames, resultFilename, loadProbability);
         sortTask.start();
         return resultFilename;
     }

@@ -1,52 +1,32 @@
 import org.apache.thrift.TException;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TServer.Args;
-import org.apache.thrift.server.TSimpleServer;
-import org.apache.thrift.server.TThreadPoolServer;
-import org.apache.thrift.transport.TTransportFactory;
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.server.*;
+import org.apache.thrift.protocol.*;
+import org.apache.thrift.transport.*;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import java.net.InetAddress;
 
+import java.io.*;
+import java.util.*;
+import java.lang.*;
+
 public class NodeServer {
-    private float loadProbability = 0;
-    private int port = 9099;
-    private ServerData serverData;
-    private String serverIP;
-    private int serverPort;
 
     public static void main(String [] args) {
         try {
             // pass master server ip, server port, node port and loadprobability in.
-            serverIP = String.parseString(args[0]);
-            serverPort = Integer.parseInt(args[1]);
-            port = Integer.parseInt(args[2]);
-            loadProbability = Float.parseFloat(args[3]);
+            String serverIP = args[0];
+            int serverPort = Integer.parseInt(args[1]);
+            int port = Integer.parseInt(args[2]);
+            float loadProbability = Float.parseFloat(args[3]);
 
             // register node
             TTransport transport = new TSocket(serverIP, serverPort);
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-            MasterServer.Client server = new MasterServer.Client(protocol);
+            MasterServer.Client serverClient = new MasterServer.Client(protocol);
             transport.open();
-            serverData = server.registerNode(InetAddress.getLocalHost().getHostAddress(), port);
+            ServerData serverData = serverClient.registerNode(InetAddress.getLocalHost().getHostAddress(), port);
             transport.close();
 
-            Runnable simple = new Runnable() {
-                public void run() {
-                    simple();
-                }
-            };
-
-            new Thread(simple).start();
-        } catch (Exception x) {
-            x.printStackTrace();
-        }
-    }
-
-    public static void simple() {
-        try {
             //Create Thrift server socket
             TServerTransport serverTransport = new TServerSocket(port);
             TTransportFactory factory = new TFramedTransport.Factory();
@@ -57,16 +37,15 @@ public class NodeServer {
             ComputeNode.Processor processor = new ComputeNode.Processor(handler);
 
             //Set server arguments
-            TServer.Args args = new TServer.Args(serverTransport);
-            args.processor(processor);  //Set handler
-            args.transportFactory(factory);  //Set FramedTransport (for performance)
+            TThreadPoolServer.Args arguments = new TThreadPoolServer.Args(serverTransport);
+            arguments.processor(processor);  //Set handler
+            arguments.transportFactory(factory);  //Set FramedTransport (for performance)
 
             //Run server as a single thread
-            TServer server = new TThreadPoolServer(args);
+            TServer server = new TThreadPoolServer(arguments);
             server.serve();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception x) {
+            x.printStackTrace();
         }
     }
 }

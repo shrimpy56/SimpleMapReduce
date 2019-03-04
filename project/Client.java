@@ -17,15 +17,11 @@ public class Client {
 
             TTransport  transport = new TSocket("localhost", 9090);//todo: port
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-            KeyValueStorage.Client client = new KeyValueStorage.Client(protocol);
-
+            MasterServer.Client client = new MasterServer.Client(protocol);
             //Try to connect
             transport.open();
-
             //What you need to do.
-			client.put("test", "heiheihei");
-            String str = client.get("test");
-            System.out.printf("I got %s from the server\n", str);
+			//todo: client.put("test", "heiheihei");
         } catch(TException e) {
             e.printStackTrace();
         }

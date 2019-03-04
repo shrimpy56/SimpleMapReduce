@@ -1,11 +1,17 @@
 import org.apache.thrift.TException;
+import org.apache.thrift.server.*;
+import org.apache.thrift.protocol.*;
+import org.apache.thrift.transport.*;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+
 import java.util.*;
+import java.util.Map.*;
 import java.lang.*;
 import java.io.*;
 
 public class SortTask extends Thread {
 
-    public SortTask(String serverIP, int serverPort, String inputFilenames, String resultFilename, float loadProbability)
+    public SortTask(String serverIP, int serverPort, List<String> inputFilenames, String resultFilename, float loadProbability)
     {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
@@ -21,7 +27,7 @@ public class SortTask extends Thread {
             List<String> files = sortFiles();
             //write to result file
             PrintWriter output = new PrintWriter(resultFilename);
-            for (String& file: files)
+            for (String file: files)
             {
                 output.println(file);
             }
@@ -40,34 +46,36 @@ public class SortTask extends Thread {
         }
     }
 
-    private List<String> sortFiles();
+    private List<String> sortFiles()
     {
-        Map<String, float> map = new HashMap<>();
-        for (String& filename: inputFilenames)
-        {
-            //read file
-            File file = new File(filename);
-            Scanner input = new Scanner(file);
+        Map<String, Float> map = new HashMap<>();
+        try {
+            for (String filename : inputFilenames) {
+                //read file
+                File file = new File(filename);
+                Scanner input = new Scanner(file);
 
-            while (input.hasNext())
-            {
-                String key = input.next();
-                float value = input.nextFloat();
-                map.add(key, value);
+                while (input.hasNext()) {
+                    String key = input.next();
+                    float value = input.nextFloat();
+                    map.put(key, value);
+                }
+
+                input.close();
             }
-
-            input.close();
+        } catch (Exception x) {
+            x.printStackTrace();
         }
         //sort
-        List<Map.Entry<String, float>> files = new ArrayList<Map.Entry<String, float>>(map.entrySet());
-        Collections.sort(files, new Comparator<Map.Entry<String, float>>() {
-            public int compare(Entry<String, float> entry1, Entry<String, float> entry2)
+        List<Map.Entry<String, Float>> files = new ArrayList<Map.Entry<String, Float>>(map.entrySet());
+        Collections.sort(files, new Comparator<Map.Entry<String, Float>>() {
+            public int compare(Entry<String, Float> entry1, Entry<String, Float> entry2)
             {
                 return entry1.getValue().compareTo(entry2.getValue());
             }
         });
         List<String> ans = new ArrayList<>();
-        for (Map.Entry<String, float>& file: files)
+        for (Map.Entry<String, Float> file: files)
         {
             ans.add(file.getKey());
         }

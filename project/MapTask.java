@@ -1,4 +1,8 @@
 import org.apache.thrift.TException;
+import org.apache.thrift.server.*;
+import org.apache.thrift.protocol.*;
+import org.apache.thrift.transport.*;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 
 import java.io.*;
 import java.util.*;
@@ -6,7 +10,7 @@ import java.lang.*;
 
 public class MapTask extends Thread {
 
-    private const float DelayTime = 3;
+    private static long DelayTime = 3000;
 
     private static HashSet<String> NegLib;// = new ArrayList<String>();
     private static HashSet<String> PosLib;// = new ArrayList<String>();

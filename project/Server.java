@@ -26,12 +26,12 @@ public class Server {
             processor = new MasterServer.Processor(handler);
 
             //Set server arguments
-            TServer.Args args = new TServer.Args(serverTransport);
-            args.processor(processor);  //Set handler
-            args.transportFactory(factory);  //Set FramedTransport (for performance)
+            TServer.Args arguments = new TServer.Args(serverTransport);
+            arguments.processor(processor);  //Set handler
+            arguments.transportFactory(factory);  //Set FramedTransport (for performance)
 
             //Run server as a single thread
-            TServer server = new TSimpleServer(args);
+            TServer server = new TSimpleServer(arguments);
             server.serve();
         } catch (Exception x) {
             x.printStackTrace();

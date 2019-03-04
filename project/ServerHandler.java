@@ -15,12 +15,14 @@ public class ServerHandler implements MasterServer.Iface
     public String job(List<String> filenames) throws org.apache.thrift.TException
     {
         //todo
+        return null;
     }
 
     @Override
     public ServerData registerNode(String ip, int port) throws org.apache.thrift.TException
     {
         //todo
+        return null;
     }
 
     @Override
