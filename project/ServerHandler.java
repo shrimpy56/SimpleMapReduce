@@ -2,13 +2,21 @@ import org.apache.thrift.TException;
 import java.util.*;
 import java.lang.*;
 
+class NodeInfo
+{
+    String IP;
+    int port;
+}
+
 public class ServerHandler implements MasterServer.Iface
 {
-//    private List of nodes
+    private List<NodeInfo> nodeList = new ArrayList<>();
+    //
     private int mode;
 
     void setData()
     {
+        //todo
     }
 
     @Override
@@ -21,8 +29,14 @@ public class ServerHandler implements MasterServer.Iface
     @Override
     public ServerData registerNode(String ip, int port) throws org.apache.thrift.TException
     {
-        //todo
-        return null;
+        NodeInfo info = new NodeInfo();
+        info.IP = ip;
+        info.port = port;
+        nodeList.add(info);
+        ServerData data = new ServerData();
+        data.mode = mode;
+        data.nodeID = nodeList.size();
+        return data;
     }
 
     @Override
