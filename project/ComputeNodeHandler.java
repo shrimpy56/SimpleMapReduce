@@ -7,6 +7,17 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     private String serverIP;
     private int serverPort;
     private String resultFilename;
+    private bool balancingMode;
+    private float loadProbability;
+
+    void setData(String serverIP, int serverPort, ServerData serverData, float loadProbability)
+    {
+        this.serverIP = serverIP;
+        this.serverPort = serverPort;
+        resultFilename = "node" + serverData.nodeID;
+        balancingMode = (serverData.mode == 2);
+        this.loadProbability = loadProbability;
+    }
 
     @Override
     public String mapTask(String filename) throws org.apache.thrift.TException;

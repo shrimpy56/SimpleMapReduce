@@ -9,37 +9,21 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 
-// Generated code
 public class Server {
-    public static ServiceHandler handler;
-    public static KeyValueStorage.Processor processor;
+    public static ServerHandler handler;
+    public static MasterServer.Processor processor;
 
     public static void main(String [] args) {
         try {
-            handler = new ServiceHandler();
-            processor = new KeyValueStorage.Processor(handler);
+            //todo: pass params in
 
-            Runnable simple = new Runnable() {
-                public void run() {
-                    simple(processor);
-                }
-            };
-
-            new Thread(simple).start();
-        } catch (Exception x) {
-            x.printStackTrace();
-        }
-    }
-
-    public static void simple(KeyValueStorage.Processor processor) {
-        try {
             //Create Thrift server socket
-            TServerTransport serverTransport = new TServerSocket(9090);
+            TServerTransport serverTransport = new TServerSocket(9090);//todo: port
             TTransportFactory factory = new TFramedTransport.Factory();
 
             //Create service request handler
-            ServiceHandler handler = new ServiceHandler();
-            processor = new KeyValueStorage.Processor(handler);
+            handler = new ServerHandler();
+            processor = new MasterServer.Processor(handler);
 
             //Set server arguments
             TServer.Args args = new TServer.Args(serverTransport);
@@ -49,9 +33,8 @@ public class Server {
             //Run server as a single thread
             TServer server = new TSimpleServer(args);
             server.serve();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception x) {
+            x.printStackTrace();
         }
     }
 }

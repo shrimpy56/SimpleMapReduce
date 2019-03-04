@@ -6,8 +6,6 @@ import java.lang.*;
 
 public class MapTask extends Thread {
 
-    // private static String NegativeFile = "negative.txt";
-    // private static String PositiveFile = "positive.txt";
     private static HashSet<String> NegLib;// = new ArrayList<String>();
     private static HashSet<String> PosLib;// = new ArrayList<String>();
     static {

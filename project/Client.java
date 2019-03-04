@@ -11,7 +11,11 @@ public class Client {
     public static void main(String [] args) {
         //Create client connect.
         try {
-            TTransport  transport = new TSocket("localhost", 9090);
+            //todo: pass params in
+
+
+
+            TTransport  transport = new TSocket("localhost", 9090);//todo: port
             TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
             KeyValueStorage.Client client = new KeyValueStorage.Client(protocol);
 
@@ -23,7 +27,7 @@ public class Client {
             String str = client.get("test");
             System.out.printf("I got %s from the server\n", str);
         } catch(TException e) {
-
+            e.printStackTrace();
         }
 
     }
