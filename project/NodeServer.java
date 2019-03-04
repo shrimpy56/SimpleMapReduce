@@ -2,7 +2,6 @@ import org.apache.thrift.TException;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TServer.Args;
 import org.apache.thrift.server.TSimpleServer;
-import org.apache.thrift.server.TThreadedServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TTransportFactory;
 import org.apache.thrift.transport.TFramedTransport;
@@ -68,7 +67,7 @@ public class NodeServer {
             args.transportFactory(factory);  //Set FramedTransport (for performance)
 
             //Run server as a single thread
-            TServer server = new TThreadedServer(args);
+            TServer server = new TThreadPoolServer(args);
             server.serve();
 
         } catch (Exception e) {

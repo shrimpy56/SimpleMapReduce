@@ -5,12 +5,13 @@ import java.io.*;
 
 public class SortTask extends Thread {
 
-    public SortTask(String serverIP, int serverPort, String inputFilenames, String resultFilename)
+    public SortTask(String serverIP, int serverPort, String inputFilenames, String resultFilename, float loadProbability)
     {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.inputFilenames = inputFilenames;
         this.resultFilename = resultFilename;
+        this.loadProbability = loadProbability;
     }
 
     public void run()
@@ -77,4 +78,5 @@ public class SortTask extends Thread {
     private int serverPort;
     private List<String> inputFilenames;
     private String resultFilename;
+    private float loadProbability;
 }

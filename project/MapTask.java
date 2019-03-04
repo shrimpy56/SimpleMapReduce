@@ -6,6 +6,8 @@ import java.lang.*;
 
 public class MapTask extends Thread {
 
+    private const float DelayTime = 3;
+
     private static HashSet<String> NegLib;// = new ArrayList<String>();
     private static HashSet<String> PosLib;// = new ArrayList<String>();
     static {
@@ -46,18 +48,26 @@ public class MapTask extends Thread {
     private int serverPort;
     private String inputFilename;
     private String resultFilename;
+    private float loadProbability;
 
-    public MapTask(String serverIP, int serverPort, String inputFilename, String resultFilename)
+    public MapTask(String serverIP, int serverPort, String inputFilename, String resultFilename, float loadProbability)
     {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.inputFilename = inputFilename;
         this.resultFilename = resultFilename;
+        this.loadProbability = loadProbability;
     }
 
     public void run()
     {
         try {
+            // load injecting
+            double delay = Math.random();
+            if (delay < loadProbability){
+                sleep(DelayTime);
+            }
+
             //count
             int[] score = countScore();
             if (score == null) {

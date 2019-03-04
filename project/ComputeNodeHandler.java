@@ -22,7 +22,15 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     @Override
     public String mapTask(String filename) throws org.apache.thrift.TException;
     {
-        MapTask mapTask = new MapTask(serverIP, serverPort, filename, resultFilename);
+        if (balancingMode)
+        {
+            double reject = Math.random();
+            if (reject < loadProbability){
+                return "";
+            }
+        }
+
+        MapTask mapTask = new MapTask(serverIP, serverPort, filename, resultFilename, loadProbability);
         mapTask.start();
         return resultFilename;
     }
@@ -30,7 +38,7 @@ public class ComputeNodeHandler implements ComputeNode.Iface
     @Override
     public String sortTask(List<String> filenames) throws org.apache.thrift.TException;
     {
-        SortTask sortTask = new MapTask(serverIP, serverPort, filename, resultFilename);
+        SortTask sortTask = new SortTask(serverIP, serverPort, filename, resultFilename, loadProbability);
         sortTask.start();
         return resultFilename;
     }
