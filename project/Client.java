@@ -26,7 +26,7 @@ public class Client {
             File[] tempList = fileDir.listFiles();
             for (File file : tempList) {
                 if (file.isFile()) {
-                    inputFiles.add(file);
+                    inputFiles.add(file.toString());
                 }
             }
             // String[] inputStrings = inputFiles.toArray(String[inputFiles.size()]);
