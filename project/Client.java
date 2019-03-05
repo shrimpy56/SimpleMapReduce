@@ -19,9 +19,25 @@ public class Client {
             transport.open();
 
             //What you need to do.
-			client.put("test", "heiheihei");
-            String str = client.get("test");
-            System.out.printf("I got %s from the server\n", str);
+            String input_dir = args[1];
+
+            List<String> inputFiles = new ArrayList<String>();
+            File fileDir = new File(input_dir);
+            File[] tempList = fileDir.listFiles();
+            for (File file : tempList) {
+                if (file.isFile()) {
+                    inputFiles.add(file);
+                }
+            }
+            // String[] inputStrings = inputFiles.toArray(String[inputFiles.size()]);
+            Result res = client.sendTask(inputFiles);
+			// client.put("test", "heiheihei");
+            // String str = client.get("test");
+            for (String name : res.resultList) {
+                System.out.println(name);
+            }
+            System.out.println(res.timeUsed);
+            System.out.println("finish job from service!");
         } catch(TException e) {
 
         }
