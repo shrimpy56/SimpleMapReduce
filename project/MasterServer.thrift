@@ -5,10 +5,16 @@ struct ServerData
     2: i32 nodeID;
 }
 
+struct Result {
+    1: list<string> resultList,
+    2: double timeUsed
+}
+
 service MasterServer
 {
-    string job(1: list<string> filenames),
+	Result sendTask(1: list<string> input_list),
 
+    //todo
     ServerData registerNode(1: string ip, 2: i32 port),
     void noticeFinishedMap(1: string resultFilename),
     void noticeFinishedSort(1: string resultFilename)
