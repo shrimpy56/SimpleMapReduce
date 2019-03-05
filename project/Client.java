@@ -6,6 +6,7 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import java.io.File；
 
 public class Client {
     public static void main(String [] args) {
@@ -21,7 +22,7 @@ public class Client {
             //Try to connect
             transport.open();
             //What you need to do.
-            String input_dir = args[1];
+            String input_dir = args[0];
 
             List<String> inputFiles = new ArrayList<String>();
             File fileDir = new File(input_dir);

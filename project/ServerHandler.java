@@ -20,7 +20,7 @@ public class ServerHandler implements MasterServer.Iface
     }
 
     @Override
-    public String job(List<String> filenames) throws org.apache.thrift.TException
+    public Result sendTask(List<String> filenames) throws org.apache.thrift.TException
     {
         //todo
         return null;
