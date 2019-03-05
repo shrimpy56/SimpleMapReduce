@@ -39,7 +39,7 @@ public class Client {
             System.out.println(res.timeUsed);
             System.out.println("finish job from service!");
         } catch(TException e) {
-
+            System.out.println("Error occurs!!!");
         }
 
     }
