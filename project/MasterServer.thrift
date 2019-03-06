@@ -6,8 +6,8 @@ struct ServerData
 }
 
 struct Result {
-    1: list<string> resultList,
-    2: double timeUsed
+    1: string filename,
+    2: i64 timeUsed
 }
 
 service MasterServer
