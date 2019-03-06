@@ -11,6 +11,8 @@ import java.io.*;
 
 public class SortTask extends Thread {
 
+    private Map<String, Double> map = new HashMap<>();
+
     public SortTask(String serverIP, int serverPort, List<String> inputFilenames, String resultFilename, float loadProbability)
     {
         this.serverIP = serverIP;
@@ -26,10 +28,13 @@ public class SortTask extends Thread {
             //count
             List<String> files = sortFiles();
             //write to result file
+            File outputFile = new File(resultFilename);
+            outputFile.getParentFile().mkdirs();
             PrintWriter output = new PrintWriter(resultFilename);
-            for (String file: files)
+            for (int i = files.size()-1; i >= 0; --i)
             {
-                output.println(file);
+                String file = files.get(i);
+                output.println(file + " " + map.get(file));
             }
             output.close();
             //notice server
@@ -48,7 +53,7 @@ public class SortTask extends Thread {
 
     private List<String> sortFiles()
     {
-        Map<String, Float> map = new HashMap<>();
+        map.clear();
         try {
             for (String filename : inputFilenames) {
                 //read file
@@ -57,7 +62,7 @@ public class SortTask extends Thread {
 
                 while (input.hasNext()) {
                     String key = input.next();
-                    float value = input.nextFloat();
+                    double value = input.nextDouble();
                     map.put(key, value);
                 }
 
@@ -67,15 +72,15 @@ public class SortTask extends Thread {
             x.printStackTrace();
         }
         //sort
-        List<Map.Entry<String, Float>> files = new ArrayList<Map.Entry<String, Float>>(map.entrySet());
-        Collections.sort(files, new Comparator<Map.Entry<String, Float>>() {
-            public int compare(Entry<String, Float> entry1, Entry<String, Float> entry2)
+        List<Map.Entry<String, Double>> files = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
+        Collections.sort(files, new Comparator<Map.Entry<String, Double>>() {
+            public int compare(Entry<String, Double> entry1, Entry<String, Double> entry2)
             {
                 return entry1.getValue().compareTo(entry2.getValue());
             }
         });
         List<String> ans = new ArrayList<>();
-        for (Map.Entry<String, Float> file: files)
+        for (Map.Entry<String, Double> file: files)
         {
             ans.add(file.getKey());
         }

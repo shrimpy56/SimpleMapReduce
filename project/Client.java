@@ -6,23 +6,18 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
-import java.io.File；
+import java.io.*;
+import java.util.*;
+import java.lang.*;
 
 public class Client {
     public static void main(String [] args) {
         //Create client connect.
         try {
-            //todo: pass params in
-
-
-
-            TTransport  transport = new TSocket("localhost", 9090);//todo: port
-            TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
-            MasterServer.Client client = new MasterServer.Client(protocol);
-            //Try to connect
-            transport.open();
-            //What you need to do.
-            String input_dir = args[0];
+            // pass params in
+            String serverIP = args[0];
+            int serverPort = Integer.parseInt(args[1]);
+            String input_dir = args[2];
 
             List<String> inputFiles = new ArrayList<String>();
             File fileDir = new File(input_dir);
@@ -30,19 +25,24 @@ public class Client {
             for (File file : tempList) {
                 if (file.isFile()) {
                     inputFiles.add(file.toString());
+                    System.out.println(file.toString());
                 }
             }
             // String[] inputStrings = inputFiles.toArray(String[inputFiles.size()]);
+
+            TTransport transport = new TSocket(serverIP, serverPort);
+            TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
+            MasterServer.Client client = new MasterServer.Client(protocol);
+            //Try to connect
+            transport.open();
             Result res = client.sendTask(inputFiles);
-			// client.put("test", "heiheihei");
-            // String str = client.get("test");
-            for (String name : res.resultList) {
-                System.out.println(name);
-            }
-            System.out.println(res.timeUsed);
-            System.out.println("finish job from service!");
+            System.out.println("===============================================");
+            System.out.println("Job finished, result is in file: " + res.filename);
+            System.out.println("Time used: " + res.timeUsed + "ms");
+            System.out.println("===============================================");
+            transport.close();
         } catch(TException e) {
-            System.out.println("Error occurs!!!");
+            e.printStackTrace();
         }
 
     }

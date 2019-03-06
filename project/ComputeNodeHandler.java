@@ -1,47 +1,65 @@
 import org.apache.thrift.TException;
+import org.apache.thrift.server.*;
+import org.apache.thrift.protocol.*;
+import org.apache.thrift.transport.*;
+import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+
+import java.io.*;
 import java.util.*;
 import java.lang.*;
 
 public class ComputeNodeHandler implements ComputeNode.Iface
 {
+    private String mapOutputDir = "./data/intermediate/";
+    private String sortOutputDir = "./data/result/";
+
     private String serverIP;
     private int serverPort;
-    private String resultFilename;
     private boolean balancingMode;
     private float loadProbability;
+    private int nodeID;
+    private long delayTime;
 
-    void setData(String serverIP, int serverPort, ServerData serverData, float loadProbability)
+    void setData(String serverIP, int serverPort, ServerData serverData, float loadProbability, long delay)
     {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
-        resultFilename = "node" + serverData.nodeID;
+        nodeID = serverData.nodeID;
         balancingMode = (serverData.mode == 2);
         this.loadProbability = loadProbability;
+        delayTime = delay;
     }
 
     @Override
-    public String mapTask(String filename) throws org.apache.thrift.TException
+    public boolean mapTask(String filename) throws org.apache.thrift.TException
     {
+        //System.out.println("server:"+serverIP+":"+serverPort);
+
         if (balancingMode)
         {
             double reject = Math.random();
             if (reject < loadProbability)
             {
-                return "";
+                System.out.println("map task rejected, file: " + filename);
+                return false;
             }
         }
+        System.out.println("map task received, file: " + filename);
 
-        MapTask mapTask = new MapTask(serverIP, serverPort, filename, resultFilename, loadProbability);
+        File tempFile = new File(filename);
+        MapTask mapTask = new MapTask(serverIP, serverPort, filename, mapOutputDir+"map_"+tempFile.getName(), loadProbability, delayTime);
         mapTask.start();
-        return resultFilename;
+        return true;
     }
 
     @Override
-    public String sortTask(List<String> filenames) throws org.apache.thrift.TException
+    public void sortTask(List<String> filenames) throws org.apache.thrift.TException
     {
-        SortTask sortTask = new SortTask(serverIP, serverPort, filenames, resultFilename, loadProbability);
+        System.out.println("sort task received.");
+        //System.out.println("sort input file [0]:" + filenames.get(0));
+
+        SortTask sortTask = new SortTask(serverIP, serverPort, filenames, sortOutputDir+"Sort", loadProbability);
         sortTask.start();
-        return resultFilename;
     }
 }
 

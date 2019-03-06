@@ -8,6 +8,7 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+import java.net.InetAddress;
 
 public class Server {
     public static ServerHandler handler;
@@ -15,23 +16,30 @@ public class Server {
 
     public static void main(String [] args) {
         try {
-            //todo: pass params in
+            //pass params in
+            int port = Integer.parseInt(args[0]);
+            //mode: 1: Random, 2: LoadBalancing
+            int mode = Integer.parseInt(args[1]);
 
             //Create Thrift server socket
-            TServerTransport serverTransport = new TServerSocket(9090);//todo: port
+            TServerTransport serverTransport = new TServerSocket(port);
             TTransportFactory factory = new TFramedTransport.Factory();
 
             //Create service request handler
             handler = new ServerHandler();
+            handler.setData(port, mode);
             processor = new MasterServer.Processor(handler);
 
             //Set server arguments
-            TServer.Args arguments = new TServer.Args(serverTransport);
+            TThreadPoolServer.Args arguments = new TThreadPoolServer.Args(serverTransport);
             arguments.processor(processor);  //Set handler
             arguments.transportFactory(factory);  //Set FramedTransport (for performance)
 
+            System.out.println("Server IP address:" + InetAddress.getLocalHost().getHostAddress() + ":" + port);
+            System.out.println("Mode:" + ((mode == 1)?"Random":"LoadBalancing"));
+
             //Run server as a single thread
-            TServer server = new TSimpleServer(arguments);
+            TServer server = new TThreadPoolServer(arguments);
             server.serve();
         } catch (Exception x) {
             x.printStackTrace();

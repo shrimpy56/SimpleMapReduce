@@ -18,6 +18,7 @@ public class NodeServer {
             int serverPort = Integer.parseInt(args[1]);
             int port = Integer.parseInt(args[2]);
             float loadProbability = Float.parseFloat(args[3]);
+            long delay = Long.parseLong(args[4]);
 
             // register node
             TTransport transport = new TSocket(serverIP, serverPort);
@@ -27,13 +28,15 @@ public class NodeServer {
             ServerData serverData = serverClient.registerNode(InetAddress.getLocalHost().getHostAddress(), port);
             transport.close();
 
+            System.out.println("Register finish!");
+
             //Create Thrift server socket
             TServerTransport serverTransport = new TServerSocket(port);
             TTransportFactory factory = new TFramedTransport.Factory();
 
             //Create service request handler
             ComputeNodeHandler handler = new ComputeNodeHandler();
-            handler.setData(serverIP, serverPort, serverData, loadProbability);
+            handler.setData(serverIP, serverPort, serverData, loadProbability, delay);
             ComputeNode.Processor processor = new ComputeNode.Processor(handler);
 
             //Set server arguments
@@ -41,7 +44,9 @@ public class NodeServer {
             arguments.processor(processor);  //Set handler
             arguments.transportFactory(factory);  //Set FramedTransport (for performance)
 
-            //Run server as a single thread
+            System.out.println("Running compute node on: " + InetAddress.getLocalHost().getHostAddress() + ":" + port);
+
+            //Run server
             TServer server = new TThreadPoolServer(arguments);
             server.serve();
         } catch (Exception x) {

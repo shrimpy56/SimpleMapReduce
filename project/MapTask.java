@@ -10,13 +10,11 @@ import java.lang.*;
 
 public class MapTask extends Thread {
 
-    private static long DelayTime = 3000;
-
-    private static HashSet<String> NegLib;// = new ArrayList<String>();
-    private static HashSet<String> PosLib;// = new ArrayList<String>();
+    private static HashSet<String> NegLib;
+    private static HashSet<String> PosLib;
     static {
-        String NegativeFile = "negative.txt";
-        String PositiveFile = "positive.txt";
+        String NegativeFile = "./data/negative.txt";
+        String PositiveFile = "./data/positive.txt";
         File nfile = new File(NegativeFile);
         File pfile = new File(PositiveFile);
         NegLib = new HashSet<>();
@@ -29,8 +27,8 @@ public class MapTask extends Thread {
                     NegLib.add(word);
                 }
                 nscanner.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("SHIT happen at line 27");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -42,8 +40,8 @@ public class MapTask extends Thread {
                     PosLib.add(word);
                 }
                 pscanner.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("SHIT happen at line 40");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -53,14 +51,16 @@ public class MapTask extends Thread {
     private String inputFilename;
     private String resultFilename;
     private float loadProbability;
+    private long delayTime = 3000;
 
-    public MapTask(String serverIP, int serverPort, String inputFilename, String resultFilename, float loadProbability)
+    public MapTask(String serverIP, int serverPort, String inputFilename, String resultFilename, float loadProbability, long delay)
     {
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.inputFilename = inputFilename;
         this.resultFilename = resultFilename;
         this.loadProbability = loadProbability;
+        this.delayTime = delay;
     }
 
     public void run()
@@ -69,30 +69,33 @@ public class MapTask extends Thread {
             // load injecting
             double delay = Math.random();
             if (delay < loadProbability){
-                sleep(DelayTime);
+                sleep(delayTime);
             }
 
             //count
             int[] score = countScore();
             if (score == null) {
-                throw new Exception("aaaaaaaaaaaaaa");
+                throw new Exception("file does not exist: " + inputFilename);
             }
             int negativeCounter = score[0];
             int positiveCounter = score[1];
             //calculate sentiment
-            System.out.println("pos points: " + Double.toString(positiveCounter));
-            System.out.println("neg points: " + Double.toString(negativeCounter));
+//            System.out.println("pos points: " + Double.toString(positiveCounter));
+//            System.out.println("neg points: " + Double.toString(negativeCounter));
             double sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
-            System.out.println(Double.toString(sentiment));
+//            System.out.println(Double.toString(sentiment));
             //write to result file
             try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
-            String sentimentString = Double.toString(sentiment);
-            String toFileString = new StringBuilder(inputFilename).append(" ").append(sentimentString).toString();
-            out.write(toFileString);
-            out.close();
-            } catch (IOException e) {
-                System.out.println("OutPut Error!");
+                File outputFile = new File(resultFilename);
+                outputFile.getParentFile().mkdirs();
+                //outputFile.createNewFile();
+                BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
+                String sentimentString = Double.toString(sentiment);
+                String toFileString = new StringBuilder(inputFilename).append(" ").append(sentimentString).toString();
+                out.write(toFileString);
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             //notice server
             TTransport transport = new TSocket(serverIP, serverPort);
@@ -127,8 +130,8 @@ public class MapTask extends Thread {
                     }
                 }
                 scn.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("Error in count scores");
+            } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             }
             return score;
