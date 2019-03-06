@@ -80,10 +80,10 @@ public class MapTask extends Thread {
             int negativeCounter = score[0];
             int positiveCounter = score[1];
             //calculate sentiment
-            System.out.println("pos points: " + Double.toString(positiveCounter));
-            System.out.println("neg points: " + Double.toString(negativeCounter));
+            // System.out.println("pos points: " + Double.toString(positiveCounter));
+            // System.out.println("neg points: " + Double.toString(negativeCounter));
             double sentiment = 1.0 * (positiveCounter - negativeCounter) / (positiveCounter + negativeCounter);
-            System.out.println(Double.toString(sentiment));
+            // System.out.println(Double.toString(sentiment));
             //write to result file
             try {
             BufferedWriter out = new BufferedWriter(new FileWriter(resultFilename));
