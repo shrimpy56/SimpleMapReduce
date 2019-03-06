@@ -42,6 +42,13 @@ public class ServerHandler implements MasterServer.Iface
 
         for (int i = 0; i < filenames.size(); ++i)
         {
+            //if does not exist, exit
+            File file = new File(filenames.get(i));
+            if (!file.exists())
+            {
+                return null;
+            }
+
             boolean flag = true;
             while (flag) {
                 int idx = (int) (Math.random() * nodeList.size());
@@ -51,7 +58,7 @@ public class ServerHandler implements MasterServer.Iface
                 ComputeNode.Client nodeClient = new ComputeNode.Client(protocol);
                 transport.open();
                 if (nodeClient.mapTask(filenames.get(i))) {
-
+                    System.out.println("Map task successfully assigned on node "+ idx + ", address: " + nodeList.get(idx).IP + nodeList.get(idx).port);
                     flag = false;
                 }
                 transport.close();
@@ -68,6 +75,11 @@ public class ServerHandler implements MasterServer.Iface
         }
 
         long timeUsed = System.currentTimeMillis() - startTime;
+
+        System.out.println("===============================================");
+        System.out.println("Job finished, map task number: "+ mapFilenames.size() +", time used: " + timeUsed + "ms");
+        System.out.println("===============================================");
+
         Result res = new Result();
         res.filename = resultFilename;
         res.timeUsed = timeUsed;
@@ -90,7 +102,7 @@ public class ServerHandler implements MasterServer.Iface
     @Override
     public void noticeFinishedMap(String resultFilename) throws org.apache.thrift.TException
     {
-        System.out.println("noticeFinishedMap:"+resultFilename);
+        System.out.println("Map job finish: " + resultFilename);
 
         mapResults.add(resultFilename);
 
@@ -111,6 +123,8 @@ public class ServerHandler implements MasterServer.Iface
     @Override
     public void noticeFinishedSort(String resultFilename) throws org.apache.thrift.TException
     {
+        System.out.println("Sort job finish: " + resultFilename);
+
         this.resultFilename = resultFilename;
         sortFinished = true;
     }

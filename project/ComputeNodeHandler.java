@@ -44,7 +44,7 @@ public class ComputeNodeHandler implements ComputeNode.Iface
                 return false;
             }
         }
-        System.out.println("map task received, file: " + filename);
+        System.out.println("map task accepted, file: " + filename);
 
         File tempFile = new File(filename);
         MapTask mapTask = new MapTask(serverIP, serverPort, filename, mapOutputDir+"map_"+tempFile.getName(), loadProbability, delayTime);

@@ -36,10 +36,17 @@ public class Client {
             //Try to connect
             transport.open();
             Result res = client.sendTask(inputFiles);
-            System.out.println("===============================================");
-            System.out.println("Job finished, result is in file: " + res.filename);
-            System.out.println("Time used: " + res.timeUsed + "ms");
-            System.out.println("===============================================");
+            if (res == null)
+            {
+                System.out.println("Error, some file does not exist.");
+            }
+            else
+            {
+                System.out.println("===============================================");
+                System.out.println("Job finished, result is in file: " + res.filename);
+                System.out.println("Time used: " + res.timeUsed + "ms");
+                System.out.println("===============================================");
+            }
             transport.close();
         } catch(TException e) {
             e.printStackTrace();
