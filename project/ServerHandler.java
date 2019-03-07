@@ -102,7 +102,15 @@ public class ServerHandler implements MasterServer.Iface
     @Override
     public void noticeFinishedMap(String resultFilename) throws org.apache.thrift.TException
     {
-        System.out.println("Map job finish: " + resultFilename);
+        if(resultFilename.isEmpty())
+        {
+            System.out.println("Map job met with some error, check if file exists.");
+        }
+        else
+        {
+            System.out.println("Map job finish: " + resultFilename);
+        }
+
 
         mapResults.add(resultFilename);
 

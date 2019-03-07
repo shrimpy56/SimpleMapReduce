@@ -75,6 +75,15 @@ public class MapTask extends Thread {
             //count
             int[] score = countScore();
             if (score == null) {
+                //notice server
+                TTransport transport = new TSocket(serverIP, serverPort);
+                TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
+                MasterServer.Client server = new MasterServer.Client(protocol);
+                //Try to connect
+                transport.open();
+                server.noticeFinishedMap("");
+                transport.close();
+
                 throw new Exception("file does not exist: " + inputFilename);
             }
             int negativeCounter = score[0];
