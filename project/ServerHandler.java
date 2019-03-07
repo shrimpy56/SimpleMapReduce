@@ -58,7 +58,7 @@ public class ServerHandler implements MasterServer.Iface
                 ComputeNode.Client nodeClient = new ComputeNode.Client(protocol);
                 transport.open();
                 if (nodeClient.mapTask(filenames.get(i))) {
-                    System.out.println("Map task successfully assigned on node "+ idx + ", address: " + nodeList.get(idx).IP + nodeList.get(idx).port);
+                    System.out.println("Map task successfully assigned on node "+ idx + ", address: " + nodeList.get(idx).IP + ":"+ nodeList.get(idx).port);
                     flag = false;
                 }
                 transport.close();
